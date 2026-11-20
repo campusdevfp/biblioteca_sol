@@ -2,7 +2,7 @@
 
 Esta es la resolución del examen práctico de RA5 y RA6. Para cada tarea vas a ver **qué pide**, **cómo se hace**, **el código** y **cómo comprobar que funciona** antes de pasar a la siguiente.
 
-!!! tip "La estrategia que funciona en un examen así"
+"La estrategia que funciona en un examen así"
     1. **Lee el código que te dan antes de escribir nada**, sobre todo `LibroMapper` y `LibrosService`. Te dicen los nombres de los métodos y cómo se usan.
     2. **Hazlo en orden**: 1 → 2 → 3 → 4 → 5 → 6 → 7. Cada tarea se apoya en la anterior.
     3. **Arranca después de cada tarea.** Un error encontrado a los 5 minutos se arregla en 1; encontrado al final, te puede costar el examen.
