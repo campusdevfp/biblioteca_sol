@@ -1,0 +1,395 @@
+{
+  "info": {
+    "name": "Biblioteca · tarea 7 resuelta",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Ejemplo · ping",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/ping",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "ping"
+          ]
+        },
+        "description": "Si responde 200, el proyecto arranca."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ejemplo · listar autores",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/autores",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "autores"
+          ]
+        },
+        "description": "Tus 8 peticiones van debajo de estas dos, sin carpetas."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"content.length = 4\", function () { pm.expect(pm.response.json().content.length).to.eql(4); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 Listar paginado",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?page=0&size=3&sort=precio,desc",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "3"
+            },
+            {
+              "key": "sort",
+              "value": "precio,desc"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"content.length = 3\", function () { pm.expect(pm.response.json().content.length).to.eql(3); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Filtros combinados",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?autor=delibes&precioMax=13",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "autor",
+              "value": "delibes"
+            },
+            {
+              "key": "precioMax",
+              "value": "13"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"content.length = 2\", function () { pm.expect(pm.response.json().content.length).to.eql(2); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Libro que no existe",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "999"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Crear libro",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"La lluvia amarilla\",\n  \"isbn\": \"978-84-322-0697-5\",\n  \"precio\": 16.5,\n  \"stock\": 4,\n  \"anioPublicacion\": 1988,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 201\", function () { pm.response.to.have.status(201); });",
+              "pm.test(\"autor = Miguel Delibes\", function () { pm.expect(pm.response.json().autor).to.eql(\"Miguel Delibes\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Crear con datos inválidos",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"\",\n  \"isbn\": \"123\",\n  \"precio\": 0,\n  \"stock\": -1,\n  \"anioPublicacion\": 1200\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 ISBN repetido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Otro título\",\n  \"isbn\": \"978-84-233-2518-4\",\n  \"precio\": 16.5,\n  \"stock\": 4,\n  \"anioPublicacion\": 1988,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 409\", function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Retirar sin stock",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/3/stock",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "3",
+            "stock"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cantidad\": -1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 409\", function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Borrar (lógico)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/2",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "2"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 204\", function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}
