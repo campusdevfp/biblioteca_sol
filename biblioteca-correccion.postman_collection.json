@@ -1,0 +1,1712 @@
+{
+  "info": {
+    "name": "Biblioteca · CORRECCIÓN (profesor)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 · Ping",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/ping",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "ping"
+          ]
+        },
+        "description": "No puntúa: comprueba que el proyecto arranca"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 · [RA6-1] data.sql cargó los 8 libros",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?size=20",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "size",
+              "value": "20"
+            }
+          ]
+        },
+        "description": "RA6 · bloque 1 · La entidad y la tabla (+ 3 consultas en H2)"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"content.length = 8\", function () { pm.expect(pm.response.json().content.length).to.eql(8); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 · [RA6-5] page, size y sort",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?page=0&size=3&sort=precio,desc",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "3"
+            },
+            {
+              "key": "sort",
+              "value": "precio,desc"
+            }
+          ]
+        },
+        "description": "RA6 · bloque 5 · Paginación y orden"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"content.length = 3\", function () { pm.expect(pm.response.json().content.length).to.eql(3); });",
+              "pm.test(\"content[0].titulo = Voces de Chernóbil\", function () { pm.expect(pm.response.json().content[0].titulo).to.eql(\"Voces de Chernóbil\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 · [RA6-5] Sin parámetros: size 10 y orden por título",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "description": "RA6 · bloque 5 · Paginación y orden"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"tamaño de página 10\", function () { const j = pm.response.json(); pm.expect(j.size !== undefined ? j.size : j.page.size).to.eql(10); });",
+              "pm.test(\"content[0].titulo = Cinco horas con Mario\", function () { pm.expect(pm.response.json().content[0].titulo).to.eql(\"Cinco horas con Mario\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 · [RA6-5] sort inventado: se ignora",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?sort=inventado",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "sort",
+              "value": "inventado"
+            }
+          ]
+        },
+        "description": "RA6 · bloque 5 · Paginación y orden"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 · [RA6-5] size=500: se recorta a 50",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?size=500",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "size",
+              "value": "500"
+            }
+          ]
+        },
+        "description": "RA6 · bloque 5 · Paginación y orden"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"tamaño de página 50\", function () { const j = pm.response.json(); pm.expect(j.size !== undefined ? j.size : j.page.size).to.eql(50); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 · [RA6-4] Filtro título",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?titulo=CAMINO",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "titulo",
+              "value": "CAMINO"
+            }
+          ]
+        },
+        "description": "RA6 · bloque 4 · Los filtros"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"content.length = 1\", function () { pm.expect(pm.response.json().content.length).to.eql(1); });",
+              "pm.test(\"content[0].titulo = El camino\", function () { pm.expect(pm.response.json().content[0].titulo).to.eql(\"El camino\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 · [RA6-4] Filtro autor",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?autor=DELIBES",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "autor",
+              "value": "DELIBES"
+            }
+          ]
+        },
+        "description": "RA6 · bloque 4 · Los filtros"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"content.length = 3\", function () { pm.expect(pm.response.json().content.length).to.eql(3); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 · [RA6-4] Filtro precioMax (incluido)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?precioMax=11.50",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "precioMax",
+              "value": "11.50"
+            }
+          ]
+        },
+        "description": "RA6 · bloque 4 · Los filtros"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"content.length = 2\", function () { pm.expect(pm.response.json().content.length).to.eql(2); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 · [RA6-4] Filtros combinados",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?autor=delibes&precioMax=13",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "autor",
+              "value": "delibes"
+            },
+            {
+              "key": "precioMax",
+              "value": "13"
+            }
+          ]
+        },
+        "description": "RA6 · bloque 4 · Los filtros"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"content.length = 2\", function () { pm.expect(pm.response.json().content.length).to.eql(2); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 · [RA6-2] Un libro, con el nombre del autor",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "1"
+          ]
+        },
+        "description": "RA6 · bloque 2 · La relación bidireccional"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"titulo = Los santos inocentes\", function () { pm.expect(pm.response.json().titulo).to.eql(\"Los santos inocentes\"); });",
+              "pm.test(\"autor = Miguel Delibes\", function () { pm.expect(pm.response.json().autor).to.eql(\"Miguel Delibes\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 · [RA5-4] Un libro que no existe",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "999"
+          ]
+        },
+        "description": "RA5 · bloque 4 · El controlador"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 · [RA6-2] Autor 1: numeroDeLibros",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/autores/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "autores",
+            "1"
+          ]
+        },
+        "description": "RA6 · bloque 2 · La relación bidireccional"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"numeroDeLibros = 3\", function () { pm.expect(pm.response.json().numeroDeLibros).to.eql(3); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 · [RA5-4] Borrar el libro 2",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/2",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "2"
+          ]
+        },
+        "description": "RA5 · bloque 4 · El controlador"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 204\", function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 · [RA6-3] R3 · el borrado da 404",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/2",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "2"
+          ]
+        },
+        "description": "RA6 · bloque 3 · Repositorio y borrado lógico"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15 · [RA6-3] R3 · el borrado no sale en el listado",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros?size=20",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ],
+          "query": [
+            {
+              "key": "size",
+              "value": "20"
+            }
+          ]
+        },
+        "description": "RA6 · bloque 3 · Repositorio y borrado lógico"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"content.length = 7\", function () { pm.expect(pm.response.json().content.length).to.eql(7); });",
+              "pm.test(\"el libro 2 no sale\", function () { pm.expect(pm.response.json().content.every(l => l.id !== 2)).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16 · [RA6-2] Autor 1 tras el borrado: numeroDeLibros",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/autores/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "autores",
+            "1"
+          ]
+        },
+        "description": "RA6 · bloque 2 · La relación bidireccional"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"numeroDeLibros = 2\", function () { pm.expect(pm.response.json().numeroDeLibros).to.eql(2); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "17 · [RA5-4] Borrar otra vez: 404",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/2",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "2"
+          ]
+        },
+        "description": "RA5 · bloque 4 · El controlador"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "18 · [RA5-1] Validación · titulo vacío",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"\",\n  \"isbn\": \"978-84-000-0000-1\",\n  \"precio\": 10.0,\n  \"stock\": 1,\n  \"anioPublicacion\": 2000,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 1 · Validación de LibroRequest"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"existe campos.titulo\", function () { pm.expect(pm.response.json().campos.titulo).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "19 · [RA5-1] Validación · titulo de 201 caracteres",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\n  \"isbn\": \"978-84-000-0000-1\",\n  \"precio\": 10.0,\n  \"stock\": 1,\n  \"anioPublicacion\": 2000,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 1 · Validación de LibroRequest"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"existe campos.titulo\", function () { pm.expect(pm.response.json().campos.titulo).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "20 · [RA5-1] Validación · isbn con mal formato",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Prueba\",\n  \"isbn\": \"9788423325184\",\n  \"precio\": 10.0,\n  \"stock\": 1,\n  \"anioPublicacion\": 2000,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 1 · Validación de LibroRequest"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"existe campos.isbn\", function () { pm.expect(pm.response.json().campos.isbn).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "21 · [RA5-1] Validación · precio 0",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Prueba\",\n  \"isbn\": \"978-84-000-0000-1\",\n  \"precio\": 0,\n  \"stock\": 1,\n  \"anioPublicacion\": 2000,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 1 · Validación de LibroRequest"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"existe campos.precio\", function () { pm.expect(pm.response.json().campos.precio).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "22 · [RA5-1] Validación · stock -1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Prueba\",\n  \"isbn\": \"978-84-000-0000-1\",\n  \"precio\": 10.0,\n  \"stock\": -1,\n  \"anioPublicacion\": 2000,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 1 · Validación de LibroRequest"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"existe campos.stock\", function () { pm.expect(pm.response.json().campos.stock).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "23 · [RA5-1] Validación · anioPublicacion 1449",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Prueba\",\n  \"isbn\": \"978-84-000-0000-1\",\n  \"precio\": 10.0,\n  \"stock\": 1,\n  \"anioPublicacion\": 1449,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 1 · Validación de LibroRequest"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"existe campos.anioPublicacion\", function () { pm.expect(pm.response.json().campos.anioPublicacion).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "24 · [RA5-1] Validación · anioPublicacion 2101",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Prueba\",\n  \"isbn\": \"978-84-000-0000-1\",\n  \"precio\": 10.0,\n  \"stock\": 1,\n  \"anioPublicacion\": 2101,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 1 · Validación de LibroRequest"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"existe campos.anioPublicacion\", function () { pm.expect(pm.response.json().campos.anioPublicacion).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "25 · [RA5-1] Validación · sin autorId",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Prueba\",\n  \"isbn\": \"978-84-000-0000-1\",\n  \"precio\": 10.0,\n  \"stock\": 1,\n  \"anioPublicacion\": 2000,\n  \"autorId\": null\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 1 · Validación de LibroRequest"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"existe campos.autorId\", function () { pm.expect(pm.response.json().campos.autorId).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "26 · [RA5-4] Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"La lluvia amarilla\",\n  \"isbn\": \"978-84-322-0697-5\",\n  \"precio\": 16.5,\n  \"stock\": 4,\n  \"anioPublicacion\": 1988,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 4 · El controlador"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 201\", function () { pm.response.to.have.status(201); });",
+              "pm.test(\"Location = /api/v1/libros/{id}\", function () { pm.expect(pm.response.headers.get(\"Location\")).to.eql(\"/api/v1/libros/\" + pm.response.json().id); });",
+              "pm.test(\"titulo = La lluvia amarilla\", function () { pm.expect(pm.response.json().titulo).to.eql(\"La lluvia amarilla\"); });",
+              "pm.test(\"autor = Miguel Delibes\", function () { pm.expect(pm.response.json().autor).to.eql(\"Miguel Delibes\"); });",
+              "pm.test(\"stock = 4\", function () { pm.expect(pm.response.json().stock).to.eql(4); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "27 · [RA5-1] Crear con los valores límite",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\n  \"isbn\": \"978-84-000-0001-8\",\n  \"precio\": 0.01,\n  \"stock\": 0,\n  \"anioPublicacion\": 1450,\n  \"autorId\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 1 · Validación de LibroRequest"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 201\", function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "28 · [RA5-1] Crear con el año 2100",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Prueba\",\n  \"isbn\": \"978-84-000-0002-5\",\n  \"precio\": 10.0,\n  \"stock\": 1,\n  \"anioPublicacion\": 2100,\n  \"autorId\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 1 · Validación de LibroRequest"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 201\", function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "29 · [RA6-3] R1 · ISBN repetido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"La lluvia amarilla\",\n  \"isbn\": \"978-84-233-2518-4\",\n  \"precio\": 16.5,\n  \"stock\": 4,\n  \"anioPublicacion\": 1988,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA6 · bloque 3 · Repositorio y borrado lógico"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 409\", function () { pm.response.to.have.status(409); });",
+              "pm.test(\"message = Ya existe un libro con el ISBN 978-84-233-2518-4\", function () { pm.expect(pm.response.json().message).to.eql(\"Ya existe un libro con el ISBN 978-84-233-2518-4\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "30 · [RA5-3] R2 · autor que no existe",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Prueba\",\n  \"isbn\": \"978-84-000-0003-2\",\n  \"precio\": 10.0,\n  \"stock\": 1,\n  \"anioPublicacion\": 2000,\n  \"autorId\": 99\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 3 · Las reglas del servicio"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"message = El autor con id 99 no existe\", function () { pm.expect(pm.response.json().message).to.eql(\"El autor con id 99 no existe\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "31 · [RA5-3] PUT con su propio ISBN",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "1"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Los santos inocentes\",\n  \"isbn\": \"978-84-233-2518-4\",\n  \"precio\": 13.5,\n  \"stock\": 7,\n  \"anioPublicacion\": 1981,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 3 · Las reglas del servicio"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"precio = 13.5\", function () { pm.expect(pm.response.json().precio).to.eql(13.5); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "32 · [RA5-3] El PUT se ha guardado",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "1"
+          ]
+        },
+        "description": "RA5 · bloque 3 · Las reglas del servicio"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"precio = 13.5\", function () { pm.expect(pm.response.json().precio).to.eql(13.5); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "33 · [RA5-3] PUT con el ISBN de otro libro",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "1"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Los santos inocentes\",\n  \"isbn\": \"978-84-233-1234-5\",\n  \"precio\": 13.5,\n  \"stock\": 7,\n  \"anioPublicacion\": 1981,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 3 · Las reglas del servicio"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 409\", function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "34 · [RA5-4] PUT a un libro que no existe",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "999"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Los santos inocentes\",\n  \"isbn\": \"978-84-233-2518-4\",\n  \"precio\": 13.5,\n  \"stock\": 7,\n  \"anioPublicacion\": 1981,\n  \"autorId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 4 · El controlador"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "35 · [RA5-2] R4 · retirar sin stock",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/3/stock",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "3",
+            "stock"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cantidad\": -1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 2 · StockRequest y la excepción propia"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 409\", function () { pm.response.to.have.status(409); });",
+              "pm.test(\"message = El libro 'Cinco horas con Mario' tiene 0 unidades: no se pueden retirar 1\", function () { pm.expect(pm.response.json().message).to.eql(\"El libro 'Cinco horas con Mario' tiene 0 unidades: no se pueden retirar 1\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "36 · [RA5-3] Sumar stock",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/1/stock",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "1",
+            "stock"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cantidad\": 5\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 3 · Las reglas del servicio"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"stock = 12\", function () { pm.expect(pm.response.json().stock).to.eql(12); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "37 · [RA5-3] Retirar stock",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/1/stock",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "1",
+            "stock"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cantidad\": -2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 3 · Las reglas del servicio"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"stock = 10\", function () { pm.expect(pm.response.json().stock).to.eql(10); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "38 · [RA5-3] El stock se ha guardado",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "1"
+          ]
+        },
+        "description": "RA5 · bloque 3 · Las reglas del servicio"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"stock = 10\", function () { pm.expect(pm.response.json().stock).to.eql(10); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "39 · [RA5-2] StockRequest sin cantidad",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/1/stock",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "1",
+            "stock"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 2 · StockRequest y la excepción propia"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"existe campos.cantidad\", function () { pm.expect(pm.response.json().campos.cantidad).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "40 · [RA5-2] StockRequest con 51",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/1/stock",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "1",
+            "stock"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cantidad\": 51\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 2 · StockRequest y la excepción propia"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"existe campos.cantidad\", function () { pm.expect(pm.response.json().campos.cantidad).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "41 · [RA5-4] Stock de un libro que no existe",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/libros/999/stock",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "libros",
+            "999",
+            "stock"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cantidad\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": "RA5 · bloque 4 · El controlador"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Código 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}
